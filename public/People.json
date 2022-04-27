@@ -1,0 +1,28 @@
+{
+	"people": [
+		{
+			"id": 1,
+			"name": "Bertie Yates",
+			"image": "berty.jpeg",
+			"years": 29
+		},
+		{
+			"id": 2,
+			"name": "Bertie Yates",
+			"image": "berty.jpeg",
+			"years": 29
+		},
+		{
+			"id": 3,
+			"name": "Bertie Yates",
+			"image": "berty.jpeg",
+			"years": 29
+		},
+		{
+			"id": 4,
+			"name": "Bertie Yates",
+			"image": "berty.jpeg",
+			"years": 29
+		}
+	]
+}
