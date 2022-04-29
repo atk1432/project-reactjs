@@ -7,7 +7,7 @@ $scrollColor: #4a4e4d;
 $inputFile: #e6e6ea;
 $widthApp: 316px;
 
-
+ 
 
 p {
 	margin: 0;
@@ -99,6 +99,7 @@ ul {
 
 	li {
 		color: #333;
+		position: relative;
 	}
 }	
 
@@ -115,7 +116,7 @@ ul {
 .Person {
 	display: flex;
 	align-items: center;
-	margin: 20px 0;
+	margin: 13px 0;
 	padding: 6px 10px;
 	background-color: $white;
 	position: relative;
@@ -133,7 +134,7 @@ ul {
 	}
 
 	.menu {
-		position: absolute;
+		position: fixed;
 		background-color: $black;
 		border-radius: 10px;
 		box-shadow: 5px 5px 15px $black;
@@ -187,6 +188,7 @@ ul {
 	.labelInput {
 		@include flex-box;
 		background-color: $inputFile;
+		cursor: pointer;
 	}
 
 }

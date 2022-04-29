@@ -11,7 +11,36 @@ import styles from "../static/birthday/Birthday.module.scss"
 // const images = require(imageLink)
  
 
+// \{^_^}\ hi!
+
+
 const API_LINK = 'http://localhost:5000/people'
+
+
+// function PersonInput() {
+
+// 	return 
+
+// }
+
+function PersonInput(props) {
+
+	const [ valueInput, setValueInput ] = useState(props.value)
+
+	return (
+		<input 
+			className={props.className}
+			style={props.style}
+			type={props.type}
+			name={props.name}
+			ref={props.reference}
+			value={valueInput}
+			onChange={(e) => setValueInput(e.target.value)}
+		/>
+	)
+
+}
+
 
 
 function Person(props) {
@@ -20,6 +49,8 @@ function Person(props) {
 	const [ showMenu, setShowMenu ] = useState(false)
 	const [ coorPerson, setCoorPerson ] = useState({})
 	const usernameInput = useRef()
+	// const username = useRef()
+	// const years = useRef()
 
 	useEffect(() => {
 
@@ -33,12 +64,12 @@ function Person(props) {
 
 	}, [isEditing, showMenu])
 
+
 	const handleShowMenu = (e) => {
 		e.stopPropagation()
 
-		const element = e.currentTarget.getBoundingClientRect()
-		const x = e.clientX - element.x 
-		const y = e.clientY - element.y + 10
+		const x = e.clientX
+		const y = e.clientY + 10
 
 		setCoorPerson({ x, y })
 
@@ -48,7 +79,10 @@ function Person(props) {
 	}
 
 	const handleClickWrapper = () => {
-		setShowMenu(false)
+		if (showMenu)
+			setShowMenu(false)
+		if (isEditing)
+			setIsEditing(false)
 	}
 
 	const handleEdit = (e) => {
@@ -61,54 +95,56 @@ function Person(props) {
 
 	
 	if (!isEditing) return (
-		<div 
-			className={styles.Person} 
-			onClick={handleShowMenu}
-		>
-			<img 
-				className={styles.image} 
-				// src={require('../static/birthday/berty.jpeg')}
-				src={require(`../static/birthday/${props.image}`)} 
-			/>
-			<div>
-				<p className={styles.name}>{props.name}</p>
-				<p className={styles.years}>{props.years} years</p>
-			</div>
-
-			{function() {
-
-				return (
-					<>
-					 	{!showMenu ? "" : (
-						<>
-							<ul 
-								className={styles.menu}
-								style={{ 
-									left: coorPerson.x, 
-									top: coorPerson.y
-								}}
-							>
-								<li onClick={handleEdit}>Edit</li>
-								<li>Delete</li>
-							</ul>
-							<div 
-								className={styles.fullWrapper}
-								onClick={handleClickWrapper}
-							>	
-							</div>									
-						</>
-						)}
-					</>								
-				)								
-
-			}() }
-		</div>
-	) 
-	else return (
-		<>
+		<li>
 			<div 
 				className={styles.Person} 
 				onClick={handleShowMenu}
+			>
+				<img 
+					className={styles.image} 
+					// src={require('../static/birthday/berty.jpeg')}
+					src={require(`../static/birthday/${props.image}`)} 
+				/>
+				<div>
+					<p className={styles.name}>{props.name}</p>
+					<p className={styles.years}>{props.years} years</p>
+				</div>
+
+				{function() {
+
+					return (
+						<>
+						 	{!showMenu ? "" : (
+							<>
+								<ul 
+									className={styles.menu}
+									style={{ 
+										left: coorPerson.x, 
+										top: coorPerson.y
+									}}
+								>
+									<li onClick={handleEdit}>Edit</li>
+									<li>Delete</li>
+								</ul>
+								<div 
+									className={styles.fullWrapper}
+									onClick={handleClickWrapper}
+								>	
+								</div>									
+							</>
+							)}
+						</>								
+					)								
+
+				}() }
+			</div>
+		</li>
+	) 
+	else return (
+		<li>
+			<div 
+				className={styles.Person} 
+				onClick={handleEdit}
 				style={{
 					zIndex: 99,
 					borderRadius: '10px'
@@ -126,17 +162,19 @@ function Person(props) {
 					hidden
 				/>
 				<div className={styles.input}>
-					<input 
+					<PersonInput 
 						className={`${styles.name} ${styles.inputListPeople}`}
 						style={{top: "-29px"}} 
 						type="text" 
 						name="username" 
-						ref={usernameInput}
+						reference={usernameInput}
+						value={props.name}
 					/>
-					<input 
+					<PersonInput
 						className={`${styles.years} ${styles.inputListPeople}`} 
-						type="text" 
+						type="number" 
 						name="years" 
+						value={props.years}
 					/>
 				</div>
 			</div>
@@ -145,7 +183,7 @@ function Person(props) {
 				onClick={handleClickWrapper}
 			>	
 			</div>	
-		</>
+		</li>
 	)
 
 }
@@ -162,15 +200,13 @@ function ListPeople(props) {
 			// onClick={handleList}
 		>
 			{props.data.map((e, i) => 
-				<li key={i}>
-					<Person
-						id={i}
-						name={e.name}
-						image={e.image}
-						years={e.years}
-						parentComponent={listPeople}
-					/>
-				</li>
+				<Person
+					key={i}
+					name={e.name}
+					image={e.image}
+					years={e.years}
+					parentComponent={listPeople}
+				/>
 			)}
 		</ul>
 	)
