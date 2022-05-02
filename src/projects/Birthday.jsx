@@ -134,9 +134,10 @@ function Person(props) {
 	const [ username, setUsername ] = useState(props.name)
 	const [ years, setYears ] = useState(props.years)
 	const [ image, setImage ] = useState(LINK_IMAGE + props.image)
+	const [ styleRemove, setStyleRemove ] = useState({})
 	const listContext = useContext(ListPeopleContext)
 	const usernameInput = useRef()
-	const styleRemove = useRef()
+	const personRef = useRef()
 
 	useEffect(() => {
 
@@ -150,12 +151,27 @@ function Person(props) {
 
 	}, [isEditing, showMenu])
 
+	useEffect(() => {
+
+		personRef.current.ontransitionend = () => {
+			listContext.setData(
+				listContext.data.filter((e, i) => 
+					i !== props.id
+				)
+			)
+			console.log(props.id)
+		}
+
+	}, [])
 
 	const handleShowMenu = (e) => {
 		e.stopPropagation()
 
 		const x = e.clientX
 		const y = e.clientY + 10
+
+		// const x = e.target.getBoundingClientRect().x
+		// const y = e.target.getBoundingClientRect().y
 
 		setCoorPerson({ x, y })
 
@@ -180,22 +196,25 @@ function Person(props) {
 	}
 
 	const handleDelete = () => {
-		listContext.setData(
-			listContext.data.filter((e, i) => 
-				i !== props.id
-			)
-		)
 
-		// styleRemove.current = {transform: 'translateX(100px)'}
+		const listPeople = props.parentComponent.current
+		const width = listPeople.getBoundingClientRect().width
+		const height = listPeople.getBoundingClientRect().height
+
+		setStyleRemove({left: width + 'px'})
 		setShowMenu(false)
+
 	}
+
+	// console.log(styleRemove)
 
 	if (!isEditing) return (
 		<li>
 			<div 
 				className={styles.Person} 
 				onClick={handleShowMenu}
-				styles={styleRemove.current}
+				style={styleRemove}
+				ref={personRef}
 			>
 				<img 
 					className={styles.image} 

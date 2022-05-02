@@ -121,6 +121,8 @@ ul {
 	background-color: $white;
 	position: relative;
 	cursor: pointer;
+	left: 0;
+	transition: left .5s ease;
 
 	.fullWrapper {
 		@extend .fullWrapper;
@@ -131,6 +133,8 @@ ul {
 		font-weight: 500;
 		font-size: 19px;
 		margin-bottom: 6px;
+		max-width: 160px;
+		word-break: break-word;
 	}
 
 	.menu {
@@ -189,17 +193,41 @@ ul {
 		@include flex-box;
 		background-color: $inputFile;
 		cursor: pointer;
+		position: relative;
+
+		&:hover {
+	   		opacity: 0.8;
+	   	}
+
+		.icon {			
+			position: absolute;
+		    color: $black;
+		    background-color: $gray;
+		    padding: 4px;
+		    bottom: -2px;
+		    right: -3px;
+		    border-radius: inherit;
+		}
+
+		.imageLabel {
+			width: 100%;
+			height: 100%;
+	   		border-radius: inherit;
+		}
 	}
 
 }
 
 
-
+.Error {
+	@include flex-box;
+}
 
 // For Galaxy Fold  
 @media (max-width: 352px) {
 	.app {
 		min-width: auto;
+		padding: 26px;
 	}
 
 	.Person {
