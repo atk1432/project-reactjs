@@ -2,11 +2,15 @@ import {
 	useEffect, 
 	useState,
 	useRef,
-	memo
-	// useContext,
-	// createContext
+	useLayoutEffect,
+	useContext,
+	createContext,
+	memo,
 } from "react"
 import styles from "../static/birthday/Birthday.module.scss"
+
+
+// console.log(process.env.PUBLIC_URL)
 // const imageLink = "../static/birthday/berty.jpeg"
 // const images = require(imageLink)
  
@@ -15,32 +19,111 @@ import styles from "../static/birthday/Birthday.module.scss"
 
 
 const API_LINK = 'http://localhost:5000/people'
+const LINK_IMAGE = window.location.origin + '/'
 
 
-// function PersonInput() {
+// Context 
+const PersonContext = createContext()
+const ListPeopleContext = createContext()
+const DataJSON = createContext()
 
-// 	return 
 
-// }
+function Error(props) {
+
+	return (
+		<h4 className={styles.Error}>
+			{props.message}
+		</h4>
+	)
+
+}
+
 
 function PersonInput(props) {
 
 	const [ valueInput, setValueInput ] = useState(props.value)
 
+	useEffect(() => {
+
+		return () => {
+			if (props.setState)
+				props.setState(valueInput)
+		}
+
+	})
+
 	return (
 		<input 
 			className={props.className}
+			id={props.id}
 			style={props.style}
 			type={props.type}
 			name={props.name}
 			ref={props.reference}
 			value={valueInput}
-			onChange={(e) => setValueInput(e.target.value)}
+			onChange={(e) => {
+				setValueInput(e.target.value)	
+			}}
+			hidden={!!props.hidden}
 		/>
 	)
 
 }
 
+
+function PersonFile(props) {
+
+	const [ link, setLink ] = useState(props.source)
+	const linkRef = useRef(link)
+	// const [ source, setSource ] = useState()
+
+	useEffect(() => {
+
+		return () => {
+			props.setState(linkRef.current)
+		}
+
+	}, [])
+
+	useEffect(() => {
+
+		linkRef.current = link
+
+	}, [link])
+
+	return (
+		<>
+			<label 
+				className={`${styles.image} ${styles.labelInput}`}
+				htmlFor={props.id}
+			>	
+				<img 
+					src={link} 
+					className={styles.imageLabel}
+				/> 
+				<i 
+					className={"fas fa-camera " + styles.icon}
+				>							
+				</i> 
+			</label>
+			<input
+				id={props.id}
+				type="file"
+				onChange={(e) => {
+					var file = e.target.files[0]
+					URL.revokeObjectURL(link)
+
+					// console.log(file && file.type.split('/')[0] === 'image')
+					if (file && file.type.split('/')[0] === 'image') {
+						setLink(URL.createObjectURL(file))
+					}
+				}}
+				hidden
+			/>
+		</>
+	)
+
+}
 
 
 function Person(props) {
@@ -48,9 +131,12 @@ function Person(props) {
 	const [ isEditing, setIsEditing ] = useState(false)
 	const [ showMenu, setShowMenu ] = useState(false)
 	const [ coorPerson, setCoorPerson ] = useState({})
+	const [ username, setUsername ] = useState(props.name)
+	const [ years, setYears ] = useState(props.years)
+	const [ image, setImage ] = useState(LINK_IMAGE + props.image)
+	const listContext = useContext(ListPeopleContext)
 	const usernameInput = useRef()
-	// const username = useRef()
-	// const years = useRef()
+	const styleRemove = useRef()
 
 	useEffect(() => {
 
@@ -93,21 +179,31 @@ function Person(props) {
 		setShowMenu(false)
 	}
 
-	
+	const handleDelete = () => {
+		listContext.setData(
+			listContext.data.filter((e, i) => 
+				i !== props.id
+			)
+		)
+
+		// styleRemove.current = {transform: 'translateX(100px)'}
+		setShowMenu(false)
+	}
+
 	if (!isEditing) return (
 		<li>
 			<div 
 				className={styles.Person} 
 				onClick={handleShowMenu}
+				styles={styleRemove.current}
 			>
 				<img 
 					className={styles.image} 
-					// src={require('../static/birthday/berty.jpeg')}
-					src={require(`../static/birthday/${props.image}`)} 
+					src={image} 
 				/>
 				<div>
-					<p className={styles.name}>{props.name}</p>
-					<p className={styles.years}>{props.years} years</p>
+					<p className={styles.name}>{username}</p>
+					<p className={styles.years}>{years} years</p>
 				</div>
 
 				{function() {
@@ -124,7 +220,7 @@ function Person(props) {
 									}}
 								>
 									<li onClick={handleEdit}>Edit</li>
-									<li>Delete</li>
+									<li onClick={handleDelete}>Delete</li>
 								</ul>
 								<div 
 									className={styles.fullWrapper}
@@ -147,20 +243,17 @@ function Person(props) {
 				onClick={handleEdit}
 				style={{
 					zIndex: 99,
-					borderRadius: '10px'
+					borderRadius: '10px',
+					cursor: "unset"
 				}}
 			>
-				<label 
-					className={`${styles.image} ${styles.labelInput}`}
-					htmlFor={"image" + props.id}
-				>	
-					<i className="fas fa-image"></i>
-				</label>
-				<input
-					id={"image" + props.id}
-					type="file"
-					hidden
+				<PersonFile
+					id={"image" + props.id}	
+					source={image}			
+					setState={setImage}
 				/>
+					
+				{/*<PersonFile>*/}
 				<div className={styles.input}>
 					<PersonInput 
 						className={`${styles.name} ${styles.inputListPeople}`}
@@ -168,13 +261,15 @@ function Person(props) {
 						type="text" 
 						name="username" 
 						reference={usernameInput}
-						value={props.name}
+						value={username}
+						setState={setUsername}
 					/>
 					<PersonInput
 						className={`${styles.years} ${styles.inputListPeople}`} 
 						type="number" 
 						name="years" 
-						value={props.years}
+						value={years}
+						setState={setYears}
 					/>
 				</div>
 			</div>
@@ -191,24 +286,36 @@ function Person(props) {
 
 function ListPeople(props) {
 
+	const dataJSON = useContext(DataJSON)
+	const [ data, setData ] = useState(dataJSON)
 	const listPeople = useRef()
 
+	useEffect(() => {
+
+		setData(dataJSON)
+
+	}, [dataJSON])
+
 	return (
-		<ul 
-			className={styles.ListPeople}
-			ref={listPeople}
-			// onClick={handleList}
-		>
-			{props.data.map((e, i) => 
-				<Person
-					key={i}
-					name={e.name}
-					image={e.image}
-					years={e.years}
-					parentComponent={listPeople}
-				/>
-			)}
-		</ul>
+		<ListPeopleContext.Provider value={{ data, setData }}>
+			<h3 className={styles.appHeader}>{data.length} birthdays today</h3>
+			<ul 
+				className={styles.ListPeople}
+				ref={listPeople}
+				// onClick={handleList}
+			>
+				{data.map((e, i) => 
+					<Person
+						key={i}
+						id={i}
+						name={e.name}
+						image={e.image}
+						years={e.years}
+						parentComponent={listPeople}
+					/>
+				)}
+			</ul>
+		</ListPeopleContext.Provider>
 	)
 
 }
@@ -221,15 +328,11 @@ function ButtonAdd() {
 }
 
 ButtonAdd = memo(ButtonAdd)
-// ListPeople = memo(ListPeople) //
+ListPeople = memo(ListPeople) //
 
 function UI() {
 
 	const [ data, setData ] = useState([])
-
-	const handleAdd = () => {
-
-	}
 
 	useEffect(() => {
 
@@ -239,12 +342,15 @@ function UI() {
 
 	}, [])
 
+	// console.log(data)
+
 	return (
-		<div className={styles.app}>
-			<h3 className={styles.appHeader}>{data.length} birthdays today</h3>
-			<ListPeople data={data} />
-			<ButtonAdd />
-		</div>
+		<DataJSON.Provider value={data}>
+			<div className={styles.app}>
+				<ListPeople />
+				<ButtonAdd />
+			</div>
+		</DataJSON.Provider>
 	)
 
 }
