@@ -122,7 +122,6 @@ ul {
 	position: relative;
 	cursor: pointer;
 	left: 0;
-	transition: left .5s ease;
 
 	.fullWrapper {
 		@extend .fullWrapper;
@@ -135,6 +134,7 @@ ul {
 		margin-bottom: 6px;
 		max-width: 160px;
 		word-break: break-word;
+		min-height: 22px;
 	}
 
 	.menu {
@@ -170,6 +170,11 @@ ul {
 		height: 50px;
 		border-radius: 50%;
 		margin-right: 10px;
+	}
+
+	.imageWithoutSrc {
+		@include flex-box;
+		background-color: $gray;
 	}
 
 	.years {

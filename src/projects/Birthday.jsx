@@ -4,6 +4,7 @@ import {
 	useRef,
 	useLayoutEffect,
 	useContext,
+	useCallback,
 	createContext,
 	memo,
 } from "react"
@@ -26,31 +27,26 @@ const LINK_IMAGE = window.location.origin + '/'
 const PersonContext = createContext()
 const ListPeopleContext = createContext()
 const DataJSON = createContext()
+const AddSignal = createContext()
 
 
-function Error(props) {
-
-	return (
-		<h4 className={styles.Error}>
-			{props.message}
-		</h4>
-	)
-
+const showImage = (link, result1, result2) => {
+	return !link ? result1 : result2
 }
-
 
 function PersonInput(props) {
 
 	const [ valueInput, setValueInput ] = useState(props.value)
+	const value = useRef()
+	value.current = valueInput
 
 	useEffect(() => {
 
 		return () => {
-			if (props.setState)
-				props.setState(valueInput)
+			props.setState(value.current)
 		}
 
-	})
+	}, [])
 
 	return (
 		<input 
@@ -97,10 +93,20 @@ function PersonFile(props) {
 				className={`${styles.image} ${styles.labelInput}`}
 				htmlFor={props.id}
 			>	
-				<img 
-					src={link} 
-					className={styles.imageLabel}
-				/> 
+				{showImage(
+					link,
+					(						
+						<>
+							<div className={`${styles.imageWithoutSrc} ${styles.imageLabel}`}>
+				
+							</div> 
+						</>
+					),
+					<img 
+						src={link} 
+						className={styles.imageLabel}
+					/> 
+				)}
 				<i 
 					className={"fas fa-camera " + styles.icon}
 				>							
@@ -128,12 +134,15 @@ function PersonFile(props) {
 
 function Person(props) {
 
+	const info = props.info
 	const [ isEditing, setIsEditing ] = useState(false)
 	const [ showMenu, setShowMenu ] = useState(false)
 	const [ coorPerson, setCoorPerson ] = useState({})
-	const [ username, setUsername ] = useState(props.name)
-	const [ years, setYears ] = useState(props.years)
-	const [ image, setImage ] = useState(LINK_IMAGE + props.image)
+
+	const [ username, setUsername ] = useState(info.name)
+	const [ years, setYears ] = useState(info.years)
+	const [ image, setImage ] = useState(LINK_IMAGE + info.image)
+
 	const [ styleRemove, setStyleRemove ] = useState({})
 	const listContext = useContext(ListPeopleContext)
 	const usernameInput = useRef()
@@ -151,27 +160,41 @@ function Person(props) {
 
 	}, [isEditing, showMenu])
 
+
+	useEffect(() => {
+		
+		setUsername(info.name)
+		setYears(info.years)
+		setImage(info.image)
+		setStyleRemove({})
+
+
+	}, [props.id])
+
+	
 	useEffect(() => {
 
-		personRef.current.ontransitionend = () => {
-			listContext.setData(
-				listContext.data.filter((e, i) => 
-					i !== props.id
-				)
-			)
-			console.log(props.id)
-		}
+		listContext.setData(
+			listContext.data.map((e) => {
+				if (e.id === props.id) {
+					return {
+						id: e.id,
+						name: username,
+						years: years,
+						image: image
+					}
+				} else return e
+			})
+		)
 
-	}, [])
+	}, [username, years, image])
+
 
 	const handleShowMenu = (e) => {
 		e.stopPropagation()
 
 		const x = e.clientX
 		const y = e.clientY + 10
-
-		// const x = e.target.getBoundingClientRect().x
-		// const y = e.target.getBoundingClientRect().y
 
 		setCoorPerson({ x, y })
 
@@ -197,13 +220,24 @@ function Person(props) {
 
 	const handleDelete = () => {
 
+		personRef.current.ontransitionend = () => {
+			listContext.setData(
+				listContext.data.filter((e, i) =>
+					e.id !== props.id
+				)
+			)
+		}
+
 		const listPeople = props.parentComponent.current
 		const width = listPeople.getBoundingClientRect().width
 		const height = listPeople.getBoundingClientRect().height
 
-		setStyleRemove({left: width + 'px'})
 		setShowMenu(false)
-
+		setStyleRemove({
+			left: width + 'px',
+			transition: 'left .5s ease'
+		})
+		
 	}
 
 	// console.log(styleRemove)
@@ -216,10 +250,23 @@ function Person(props) {
 				style={styleRemove}
 				ref={personRef}
 			>
-				<img 
-					className={styles.image} 
-					src={image} 
-				/>
+				{showImage(
+					image, 
+					(
+						<>
+							<div className={`${styles.image} ${styles.imageWithoutSrc} ${styles.imageLabel}`}>
+								<i 
+									className={"fas fa-camera " + styles.icon}
+								>							
+								</i> 
+							</div> 
+						</>
+					),
+					<img 
+						className={styles.image} 
+						src={image} 
+					/>
+				)}
 				<div>
 					<p className={styles.name}>{username}</p>
 					<p className={styles.years}>{years} years</p>
@@ -307,13 +354,40 @@ function ListPeople(props) {
 
 	const dataJSON = useContext(DataJSON)
 	const [ data, setData ] = useState(dataJSON)
+	const [ id, setId ] = useState()
 	const listPeople = useRef()
+	const setAddSignal = useContext(AddSignal)
 
 	useEffect(() => {
 
 		setData(dataJSON)
 
+		if (dataJSON[dataJSON.length - 1])
+			setId(dataJSON[dataJSON.length - 1].id + 1)
+
 	}, [dataJSON])
+
+	useEffect(() => {
+		if (id - 1 !== dataJSON.length)
+			listPeople.current.scrollTo(0, listPeople.current.scrollHeight)
+	}, [id])
+
+	useEffect(() => {
+
+		if (props.addSignal) {
+			setData([...data, {
+				id: id,
+				name: '',
+				years: '',
+				image: ''
+			}])
+			setId(id + 1)
+			setAddSignal(false)		
+		}
+
+	}, [props.addSignal])
+
+	console.log(data)
 
 	return (
 		<ListPeopleContext.Provider value={{ data, setData }}>
@@ -326,10 +400,12 @@ function ListPeople(props) {
 				{data.map((e, i) => 
 					<Person
 						key={i}
-						id={i}
-						name={e.name}
-						image={e.image}
-						years={e.years}
+						id={e.id}
+						info={{
+							name: e.name,
+							image: e.image,
+							years: e.years
+						}}
 						parentComponent={listPeople}
 					/>
 				)}
@@ -340,9 +416,14 @@ function ListPeople(props) {
 }
 
 
-function ButtonAdd() {
+function ButtonAdd(props) {
 	return (
-		<button className={styles.button}>Add</button>
+		<button 
+			className={styles.button}
+			onClick={props.onClick}
+		>
+			Add
+		</button>
 	)
 }
 
@@ -352,6 +433,7 @@ ListPeople = memo(ListPeople) //
 function UI() {
 
 	const [ data, setData ] = useState([])
+	const [ addSignal, setAddSignal ] = useState(false)
 
 	useEffect(() => {
 
@@ -361,15 +443,19 @@ function UI() {
 
 	}, [])
 
-	// console.log(data)
+	const handleAdd = useCallback(() => {
+		setAddSignal(true)
+	}, [])
 
 	return (
-		<DataJSON.Provider value={data}>
-			<div className={styles.app}>
-				<ListPeople />
-				<ButtonAdd />
-			</div>
-		</DataJSON.Provider>
+		<AddSignal.Provider value={setAddSignal}>
+			<DataJSON.Provider value={data}>
+				<div className={styles.app}>
+					<ListPeople addSignal={addSignal} />
+					<ButtonAdd onClick={handleAdd} />
+				</div>
+			</DataJSON.Provider>
+		</AddSignal.Provider>
 	)
 
 }
