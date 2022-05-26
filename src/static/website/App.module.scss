@@ -1,0 +1,539 @@
+$widthComputerLarge: 1100px;
+$widthComputerSmall: 902px;
+$widthTablet: 702px;
+$widthMobile: 86%;
+$heightNavbar: 84px;
+
+a {
+	text-decoration: none;
+	font-size: 20px;
+	color: black;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+
+@mixin flex-space-between {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+@mixin flex-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+
+@keyframes fadeOut {
+	from {
+		transform: translateY(20px);
+		opacity: 0;
+	} to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.bg-white {
+	background-color: white;
+}
+
+.bg-transparent {
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.Container {
+	@include flex-space-between;	
+	width: $widthComputerLarge;
+	margin: auto;
+}
+
+
+.Navbar {
+	background-color: black;
+	padding: 15px 0;
+	position: fixed;
+	width: 100%;
+	height: $heightNavbar;
+	z-index: 99;
+
+	a {
+		color: white;
+	}
+
+
+	.Logo {
+		font-size: 36px;
+		font-weight: 900;
+
+		span {
+			margin-right: 8px;
+		}
+	}
+
+	.Menu {
+		@include flex-space-between;
+
+		a {
+			display: block;
+			margin-right: 35px;
+			font-size: 20px;
+		}
+	}
+
+	.MenuIcon {
+		color: white;
+		font-size: 30px;
+		cursor: pointer;
+	}
+}
+
+
+.Page {
+	padding-top: $heightNavbar;
+
+	.HeroSection {
+		position: relative;
+		overflow: hidden;
+
+		.VideoContainer {
+			width: 100%;
+		    height: 100vh;
+		    overflow: hidden;
+
+			.Video {
+			    min-width: 100%;
+			    min-height: 100%;
+			    width: auto;
+			    height: auto;
+			}
+		}
+
+		.Category {
+			position: absolute;
+			left: 50%;
+			top: 45%;
+			animation: fadeOut 1s;
+
+			.CategoryChild {
+				@include flex-center;
+				position: relative;
+				left: -50%;
+				transform: translateY(-78%);
+				flex-direction: column;
+				
+				h1, p {
+					color: white;
+				}
+
+				h1 {
+					display: flex;
+					font-size: 50px;
+					margin-bottom: 18px;
+					white-space: nowrap;
+				}
+
+				p {
+					font-size: 20px;
+					margin-bottom: 32px;
+				}
+
+				.ButtonContainer {
+					display: flex;
+				}
+
+				.Button {
+					@include flex-center;
+					border-radius: 0;
+					width: 225px;
+					padding: 0 0;
+					height: 52px;
+
+					i {
+						margin-left: 5px;
+					}
+				}
+			}
+
+		}
+	}
+}
+
+.Cards {
+	margin: 100px 0;
+
+	.Container {
+		flex-direction: column;
+	}
+
+	.Header {
+		text-align: center;
+		margin: auto;
+	}
+
+	.List {
+		display: grid;
+		width: 100%;
+		gap: 55px;
+		margin: 48px 0;
+		grid-template-areas: 
+			'item1 item1 item1 item2 item2 item2'
+			'item3 item3 item4 item4 item5 item5';
+
+
+		.Item {
+			&:nth-child(1) { grid-area: item1 }
+
+			&:nth-child(2) { grid-area: item2 }
+
+			&:nth-child(3) { grid-area: item3 }
+
+			&:nth-child(4) { grid-area: item4 }
+
+			&:nth-child(5) { grid-area: item5 }
+
+			.CardItem {
+				display: block;
+				box-shadow: 0px 0px 14px #ccc;
+				border-radius: 10px;
+				overflow: hidden;
+				opacity: 0;
+
+				&:hover {
+					color: black;
+
+					.Image {
+						transform: scale(1.1);
+					}
+				}
+			}
+
+			&:nth-child(1),
+			&:nth-child(2) {
+				.ImageContainer {
+					height: 500px;
+				}
+			}
+
+			&:nth-child(3),
+			&:nth-child(4),
+			&:nth-child(5) {
+				.ImageContainer {
+					height: 300px;
+				}
+			}
+
+			.ImageContainer {
+				width: 100%;
+				overflow: hidden;
+				position: relative;
+
+				.Image {
+					width: 100%;
+					height: 100%;
+					transition-duration: 0.8s;
+				}
+
+				span {
+					position: absolute;
+				    background-color: blue;
+				    bottom: 0;
+				    color: white;
+				    left: 20px;
+				    padding: 6px 10px;
+				    border-radius: 8px 8px 0 0;
+				    font-size: 16px;
+				}
+			}
+
+			.TextContainer {
+				padding: 26px;
+				max-height: 200px;
+			}
+
+		}
+	}
+}
+
+.Footer {
+	background-color: black;
+	padding: 28px 0;
+	overflow: hidden;
+
+	p, a, h1, h3, i {
+		color: white;
+	}
+
+	h1 {
+		font-size: 26px;
+	    text-align: center;
+	    margin-top: 56px;
+	}
+
+	p {
+		margin: 14px 0;
+		font-size: 20px;
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+		margin: 28px 0;
+	}
+
+	input[type="text"] {
+		padding: 6px 14px;
+	    font-size: 20px;
+	    width: 212px;
+	    border-radius: 10px;
+	}
+
+	button {
+		background-color: transparent;
+	    border: 0;
+	    padding: 0;
+
+	    a {
+	    	width: 100%;
+		    display: block;
+		    margin-top: 10px;
+		    border-radius: 10px;
+	    }
+	}
+
+	.Links {
+		display: grid;
+		justify-content: space-around;
+		grid-template-columns: auto auto auto auto;
+		margin: 33px 0;
+		width: 100%;
+
+		.LinkItem {
+			display: flex;
+			flex-direction: column;
+
+			h3 {
+				font-size: 20px;
+			}
+
+			a {
+				font-size: 16px;
+			}
+		}
+	}
+
+	.Connects {
+		@include flex-space-between;
+		flex-wrap: wrap;
+		margin-bottom: 10px;
+		margin-right: 36px;
+
+		a {
+			margin-left: 26px;
+			font-size: 26px;
+		}
+	}
+
+	.Container {
+		flex-direction: column;
+	}
+}
+
+
+.Button {
+	content: "";
+	&:hover {
+		opacity: 0.8;
+	}
+}
+
+.ButtonPrimary {
+	// color: black !important;
+	border-radius: 5px;
+}
+
+.ButtonOutline {
+	border: 1px solid white;
+
+	&:hover {
+		background-color: white;
+		color: black !important;
+	}
+}
+
+.ButtonMedium {
+	padding: 6px 18px;
+	// background-color: white;
+}
+
+
+@media (max-width: 1200px) {
+	.Container {
+		width: $widthComputerSmall;
+	}
+}
+
+@media (max-width: 992px) {
+	.Container {
+		width: $widthTablet;
+	}	
+
+	.Cards {
+		.List {
+			gap: 26px;
+
+			.Item {
+				&:nth-child(1),
+				&:nth-child(2) {
+					.ImageContainer {
+						height: 370px;
+					}
+				}	
+
+				&:nth-child(3),
+				&:nth-child(4),
+				&:nth-child(5) {
+					.ImageContainer {
+						height: 230px;
+					}
+				}
+			}
+		}
+	}
+}
+
+@media (max-width: 768px) {
+	.Container {
+		width: $widthMobile;
+	}
+
+	.Navbar { 
+		.Container {
+
+			.Menu {
+				position: absolute;
+				right: 0;
+				top: 100%;
+				display: block;
+				background-color: black;
+				width: 100%;
+				height: 0;
+				overflow: hidden;
+				transition-duration: .3s;
+				box-shadow: 0 8px 15px rgb(0 0 0 / 25%);
+
+				.Link {
+					@include flex-center;
+					height: 66px;
+					width: 100%;
+					user-select: none;
+
+					&:hover {
+						opacity: 0.8;
+						background-color: gray;
+					}
+				}
+			}
+		}
+
+	}
+	
+	.Page {
+		.HeroSection {
+			 .Category {
+				.CategoryChild {
+					.ButtonContainer {
+						flex-direction: column;
+					}
+
+					.Button:first-child {
+						margin-bottom: 10px;
+					}
+				}
+			 }
+		}
+	} 
+
+	.Cards {
+		.List {
+			grid-template-areas:
+				'item1'
+				'item2'
+				'item3'
+				'item4'
+				'item5';
+			padding: 0 100px;
+			.Item {
+				&:nth-child(3),
+				&:nth-child(4),
+				&:nth-child(5) {
+					.ImageContainer {
+						height: 370px;
+					}
+				}
+			}
+		}
+	}
+
+	.Footer {
+		.Links {
+			grid-template-columns: auto auto;
+			justify-content: space-evenly;
+
+			.LinkItem {
+				margin-bottom: 53px;
+			}
+		}
+	}
+}
+
+@media (max-width: 590px) {
+	.Navbar .Logo span {
+		display: none;
+	}
+
+	.HeroSection .CategoryChild h1 {
+		font-size: 35px !important;
+	}
+
+	.Cards .List {
+		padding: 0;
+	}
+
+	.Footer {
+		.Links {
+			grid-template-columns: auto ;
+			// justify-content: space-evenly;
+
+			.LinkItem {
+				margin-bottom: 53px;
+
+
+			}
+		}
+
+		.Connects {
+			a {
+
+			}
+		}
+	}
+}
+
+@media (max-width: 382px) {
+	.HeroSection .CategoryChild h1 {
+		font-size: 25px !important;
+	}	
+}
+
+@media (max-width: 281px) {
+	.Cards .List .Item .CardItem .ImageContainer {
+		height: 270px;
+	}
+}
