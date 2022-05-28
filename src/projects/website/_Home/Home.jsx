@@ -1,6 +1,8 @@
 import React, { 
 	useRef, 
-	useEffect
+	useEffect,
+	useState,
+	memo
 } from "react"
 import { Link } from "react-router-dom"
 import styles from "../../../static/website/App.module.scss"
@@ -139,6 +141,33 @@ function HeroSection() {
 }
 
 
+function PageLoading(props) {
+
+	return (
+		<div 
+			className={styles.PageLoading}
+			style={props.hide ? {
+					opacity: 0,
+					visibility: 'hidden'
+				} : {}
+			}
+		>
+			<div className={styles.Animation}>
+				<div className={styles.Item}></div>
+	            <div className={styles.Item}></div>
+	            <div className={styles.Item}></div>
+	            <div className={styles.Item}></div>
+	            <div className={styles.Item}></div>
+	            <div className={styles.Item}></div>
+	            <div className={styles.Item}></div>
+	            <div className={styles.Item}></div>
+			</div>
+		</div>
+	)
+
+}
+
+
 function Home() {
 
 	const elements = useRef([])
@@ -147,7 +176,7 @@ function Home() {
 		if (!elements.current.includes(ref) && ref)
 			elements.current.push(ref)
 	}
-
+//
 	useEffect(() => {
 		const elementVisible = 650
 
@@ -178,7 +207,18 @@ function Home() {
 
 	}, [])
 
-	return (
+
+	useEffect(() => {
+
+		window.onload = () => {
+			console.log('Page has load!')
+		}
+
+	}, [])
+//
+	console.log('render')
+
+	return (		
 		<div className={styles.Page}>
 			<HeroSection />
 			<Cards pushElement={pushElement} />
@@ -187,5 +227,27 @@ function Home() {
 
 }
 
+Home = memo(Home)
 
-export default Home
+
+export default () => {
+
+	const [ hide, setHide ] = useState(false)
+
+	useEffect(() => {
+
+		window.onload = () => {
+			setHide(true)
+			document.body.style.overflow = 'visible'
+		}
+
+	}, [])
+
+	return (
+		<>
+			<PageLoading hide={hide} />
+			<Home />
+		</>
+	)
+
+}

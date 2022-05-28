@@ -372,6 +372,117 @@ ul {
 	// background-color: white;
 }
 
+@keyframes Move {
+    0% {
+        transform: rotate(0);
+        opacity: 1;
+    }
+
+    20% {
+        transform: rotate(90deg);
+        opacity: 0;
+    }
+
+    21% {
+        transform: rotate(0);
+    }
+
+    100% {
+        opacity: 1;   
+    }
+}
+
+.PageLoading {
+	--item-width: 50px;
+    --item-nwidth: -50px;
+    --item-3width: calc(2 * var(--item-width));
+    --time-delay: 3s;
+    --time-item:  calc(var(--time-delay) / 8);
+
+    --time-2time:  calc(var(--time-item) * 2);
+    --time-3time:  calc(var(--time-item) * 3);
+    --time-4time:  calc(var(--time-item) * 4);
+    --time-1time:  calc(var(--time-item) * 1);
+    --time-5time:  calc(var(--time-item) * 5);
+    --time-6time:  calc(var(--time-item) * 6);
+    --time-7time:  calc(var(--time-item) * 7);
+    --time-8time:  calc(var(--time-item) * 8);
+
+	@include flex-center;
+	position: fixed;
+	background-color: white;
+	width: 100%;
+	height: 100%;
+	z-index: 99;
+    opacity: 1;
+    visibility: visible;
+   	transition-duration: 0.5s;
+
+	.Animation {
+		width: calc(3 * var(--item-width));
+        height: calc(3 * var(--item-width));
+        position: relative;
+
+        .Item {
+        	position: absolute;
+            width: var(--item-width);
+            height: var(--item-width);
+            background-color: black;
+            animation: Move var(--time-delay);
+
+	        &:nth-child(1) {
+                left: 0;
+                top: var(--item-3width);
+                animation-delay: var(--time-1time);
+            }
+
+	        &:nth-child(2) {
+	            left: 0;
+	            top: var(--item-width);
+	            animation-delay: var(--time-2time);
+	        }
+
+	        &:nth-child(3) {
+	            left: 0;
+	            top: 0;
+	            animation-delay: var(--time-3time);
+	        }
+
+	        &:nth-child(4) {
+	            left: var(--item-width);
+	            top: 0;
+	            animation-delay: var(--time-4time);
+	        }
+
+	        &:nth-child(5) {
+	            left: var(--item-3width);
+	            top: 0;
+	            animation-delay: var(--time-5time);
+	        }
+
+	        &:nth-child(6) {
+	            left: var(--item-3width);
+	            top: var(--item-width);
+	            animation-delay: var(--time-6time);
+	        }
+
+	        &:nth-child(7) {
+	            left: var(--item-3width);
+	            top: var(--item-3width);
+	            animation-delay: var(--time-7time);
+	        }
+
+	        &:nth-child(8) {
+	            left: var(--item-width);
+	            top: var(--item-3width);
+	            animation-delay: var(--time-8time);
+	        }
+        }
+
+
+	}
+}
+
 
 @media (max-width: 1200px) {
 	.Container {
