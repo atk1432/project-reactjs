@@ -429,6 +429,7 @@ ul {
             height: var(--item-width);
             background-color: black;
             animation: Move var(--time-delay);
+           	animation-iteration-count: infinite;
 
 	        &:nth-child(1) {
                 left: 0;
